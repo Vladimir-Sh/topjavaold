@@ -1,5 +1,8 @@
 package ru.javawebinar.topjava.repository.mock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.LoggedUser;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.repository.UserMealRepository;
@@ -15,7 +18,9 @@ import java.util.stream.Collectors;
  * GKislin
  * 15.09.2015.
  */
+@Repository
 public class InMemoryUserMealRepositoryImpl implements UserMealRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
     private Map<Integer, UserMeal> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
@@ -25,6 +30,7 @@ public class InMemoryUserMealRepositoryImpl implements UserMealRepository {
 
     @Override
     public UserMeal save(UserMeal userMeal) {
+        LOG.info("save " + userMeal);
         if (userMeal.isNew()) {
             userMeal.setId(counter.incrementAndGet());
         }
@@ -33,12 +39,15 @@ public class InMemoryUserMealRepositoryImpl implements UserMealRepository {
     }
 
     @Override
-    public void delete(int id) {
+    public boolean delete(int id) {
+        LOG.info("delete " + id);
         repository.remove(id);
+        return true;
     }
 
     @Override
     public UserMeal get(int id) {
+        LOG.info("get " + id);
         UserMeal meal = repository.get(id);
         if (LoggedUser.id() == meal.getUserId())
         return meal;
@@ -48,6 +57,7 @@ public class InMemoryUserMealRepositoryImpl implements UserMealRepository {
 
     @Override
     public Collection<UserMeal> getAll() {
+        LOG.info("getAll");
         return repository.values().stream().sorted((u1, u2) -> -u2.getDateTime().compareTo(u1.getDateTime())).collect(Collectors.toList());
     }
 }
