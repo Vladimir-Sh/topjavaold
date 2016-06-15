@@ -23,27 +23,27 @@ public class UserMealRestController {
     @Autowired
     private UserMealService service;
 
-    UserMeal save(UserMeal userMeal){
+    public UserMeal save(UserMeal userMeal){
         userMeal.setId(null);
         LOG.info("create " + userMeal);
         return service.save(userMeal);
 
     }
 
-    void delete(int id){
+    public void delete(int id){
         LOG.info("delete " + id);
         ExceptionUtil.checkNotFound((LoggedUser.id() == service.get(id).getUserId()), String.valueOf(id));
         service.delete(id);
 
     }
 
-    UserMeal get(int id){
+    public UserMeal get(int id){
         ExceptionUtil.checkNotFound((LoggedUser.id() == service.get(id).getUserId()), String.valueOf(id));
         LOG.info("get " + id);
         return service.get(id);
     }
 
-    Collection<UserMeal> getAll(){
+    public Collection<UserMeal> getAll(){
     LOG.info("getAll");
     return service.getAll().stream()
             .filter(m -> m.getUserId() == LoggedUser.id())
